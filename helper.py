@@ -14,4 +14,16 @@ def git_push(branch_name: str, file: str, repo: str, commit_message: str):
     repo.git.commit('-m', commit_message)
     repo.git.push('origin', branch_name)
     return print("Push file successfully")
-   
+
+
+def fl_agg_logistic_regression(list_weigth):
+    aggregated_weights = {'intercept': 0.0, 'slope': 0.0}
+    for weights in list_weigth:
+        aggregated_weights['intercept'] += weights['intercept']
+        aggregated_weights['slope'] += weights['slope']
+
+    num_elements = len(list_weigth)
+    aggregated_weights['intercept'] /= num_elements
+    aggregated_weights['slope'] /= num_elements
+
+    return aggregated_weights

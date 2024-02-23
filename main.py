@@ -29,23 +29,16 @@ class FLServer:
         file_list = os.listdir("./")
         weight_files = [file for file in file_list if 'weight-client' in file]
 
-        all_weights = []
+        list_weigth = []
 
         for weight_file in weight_files:
             file_path = os.path.join('./', weight_file)
             with open(file_path, 'rb') as file:
-                weights = pickle.load(file)
-                all_weights.append(weights)
+                weight = pickle.load(file)
+                list_weigth.append(weight)
 
-        aggregated_weights = {'intercept': 0.0, 'slope': 0.0}
-
-        for weights in all_weights:
-            aggregated_weights['intercept'] += weights['intercept']
-            aggregated_weights['slope'] += weights['slope']
-
-        num_elements = len(all_weights)
-        aggregated_weights['intercept'] /= num_elements
-        aggregated_weights['slope'] /= num_elements
+        # Algorithims to aggregate weigth for classical ML: Logistic Regression
+        aggregated_weights = helper.fl_agg_logistic_regression
 
         print(f"Aggregated Model round {self.count_fl_round} successfully")
         print("Aggregated Model Coefficients:", aggregated_weights)
