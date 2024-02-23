@@ -16,6 +16,8 @@ class FLServer:
         self.git_repo_url = os.environ.get('GIT_FL_REPO')
         self.repo_path = './fl'
         self.count_fl_round = 1
+        self.client_list = []
+        self.count_client = 0
 
         self.setup_routes()
 
@@ -62,12 +64,18 @@ class FLServer:
     def trained_actknowledge(self):
         client = request.args.get('client')
 
-        repo = helper.git_clone(self.git_repo_url, self.repo_path)
-        global_model_file = self.weigth_aggregate()
-        helper.git_push('main',global_model_file, repo,'commit from fl server')
-        shutil.rmtree(self.repo_path, ignore_errors=True)
+        if client not in self.client_list:
+            self.client_list.append(client)
+            self.count_client +=1
 
-        self.count_fl_round += 1
+        if self.count_client == self.number_of_client and self.count_fl_round <= self.round_for_fl:
+            repo = helper.git_clone(self.git_repo_url, self.repo_path)
+            global_model_file = self.weigth_aggregate()
+            helper.git_push('main',global_model_file, repo,'commit from fl server')
+            shutil.rmtree(self.repo_path, ignore_errors=True)
+            self.count_client = 0
+            self.count_fl_round += 1
+
         data = {'message': 'success'}
         return jsonify(data), 200
 
