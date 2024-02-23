@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 import helper
 import shutil
+import sys
 
 load_dotenv()
 
@@ -75,6 +76,9 @@ class FLServer:
             shutil.rmtree(self.repo_path, ignore_errors=True)
             self.count_client = 0
             self.count_fl_round += 1
+
+        if self.count_fl_round == self.round_for_fl:
+            sys.exit()
 
         data = {'message': 'success'}
         return jsonify(data), 200
